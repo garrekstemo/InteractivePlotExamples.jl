@@ -13,13 +13,24 @@ y3 = @lift($(y1) + $(y2))
 fig = Figure()
 display(fig)
 
+color1 = :steelblue3
+color1a = :midnightblue
+color2 = :orange
+color2a = :firebrick4
+
 sg = SliderGrid(fig[1:2, 2][1, 1],
-    (label = L"a_1", range = 0.1:0.01:3, format = "{:.1f}", startvalue = 1),
-    (label = L"ω_1", range = 0:0.01:10, format = "{:.1f}π", startvalue = 1),
-    (label = L"δ_1", range = -6:0.01:6, format = "{:0.1f}π", startvalue = 0),
-    (label = L"a_2", range = 0.1:0.01:3, format = "{:.1f}", startvalue = 1),
-    (label = L"ω_2", range = 0:0.01:10, format = "{:.1f}π", startvalue = 1),
-    (label = L"δ_2", range = -6:0.01:6, format = "{:0.1f}π", startvalue = 0.5),
+    (label = L"a_1", range = 0.1:0.01:3, format = "{:.1f}", startvalue = 1, 
+        color_active_dimmed = color1, color_active = color1a),
+    (label = L"ω_1", range = 0:0.01:10, format = "{:.1f}π", startvalue = 1,
+        color_active_dimmed = color1, color_active = color1a),
+    (label = L"δ_1", range = -6:0.01:6, format = "{:0.1f}π", startvalue = 0,
+        color_active_dimmed = color1, color_active = color1a),
+    (label = L"a_2", range = 0.1:0.01:3, format = "{:.1f}", startvalue = 1,
+        color_active_dimmed = color2, color_active = color2a),
+    (label = L"ω_2", range = 0:0.01:10, format = "{:.1f}π", startvalue = 1,
+        color_active_dimmed = color2, color_active = color2a),
+    (label = L"δ_2", range = -6:0.01:6, format = "{:0.1f}π", startvalue = 0.5,
+        color_active_dimmed = color2, color_active = color2a),
     tellheight = false,
 )
 
@@ -43,13 +54,13 @@ ax1 = Axis(fig[1, 1], title = "Independent sine waves", xlabel = "t", ylabel = "
             # xticks = (xtickvals, xtickformat))
 )
 
-lines!(x, y1, label = L"f_1")
-lines!(x, y2, label = L"f_2")
+lines!(x, y1, label = L"f_1", color = color1)
+lines!(x, y2, label = L"f_2", color = color2)
 ylims!(-3.1, 3.1)
 axislegend(ax1)
 
 ax2 = Axis(fig[2, 1], title = "Sum of sines", xlabel = "t", ylabel = L"f_1 + f_2",
             # xticks = (xtickvals, xtickformat))
 )
-lines!(x, y3)
+lines!(x, y3, color = :indigo)
 ylims!(-5.2, 5.2)
