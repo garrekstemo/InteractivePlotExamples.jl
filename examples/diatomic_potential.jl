@@ -62,8 +62,8 @@ n_max = @lift(Int(floor($λ - 0.5)))
 
 ns =@lift(0:$n_max)
 q_e = 1.27455e-10
-q_min = q_e - log(5) / to_value(a)
-q_max = q_e - log(1 - 0.9999999) / to_value(a)
+q_min = q_e - log(10) / to_value(a)
+q_max = q_e - log(1 - 0.9999) / to_value(a)
 q = range(q_min, q_max, length = 1000)
 
 
@@ -77,14 +77,30 @@ fig = Figure(resolution = (1800, 1000))
 display(fig)
 DataInspector(fig)
 
+l1 = Label(fig, L"V_m(q) = D (1 - e^{-a  (q - q_e)})^2")
+l2 = Label(fig, L"E_m = ω_0\left(n + \frac{1}{2}\right) - ω_0χ_0\left(n + \frac{1}{2}\right)^2")
+l3 = Label(fig, L"ω_0 = \frac{a}{2πc}\sqrt{\frac{2D}{m}}, \quad ω_0χ_0 = \frac{ω_0^2}{4D}")
+
+toggle_m = Toggle(fig, active = true)
+toggle_h = Toggle(fig, active = true)
+label_m = Label(fig, "Morse")
+label_h = Label(fig, "Harmonic")
+
 sg = SliderGrid(fig,
-        (label = L"ω_0", range = 1000:0.1:10000, startvalue=3000),
-        (label = L"ω_0χ", range = 1:0.1:200, startvalue=50),
+        (label = L"ω_0", range = 1000:0.1:10000, format="{:.1f} cm⁻¹", startvalue=3000),
+        (label = L"ω_0χ", range = 1:0.1:200, format="{:.1f} cm⁻¹", startvalue=50),
         tellheight = false,
-        width = 500,
+        width = 600,
 )
 
-fig[1, 2] = vgrid!(
+fig[1, 2][1, 1] = vgrid!(
+    l1,
+    l2,
+    l3,
+    tellheight = false
+)
+fig[1, 2][2, 1] = grid!(hcat([toggle_m, toggle_h], [label_m, label_h]), tellheight = false)
+fig[1, 2][3, 1] = vgrid!(
         sg,
         tellheight=false
 )
@@ -94,8 +110,8 @@ connect!(ω_0, sliderobservables[1])
 connect!(ω0χ, sliderobservables[2])
 
 ax = Axis(fig[1, 1], title = "Diatomic potential model", xlabel = "Intermolecular distance (Å)", ylabel = "Wavenumbers (cm⁻¹)",)
-lines!(q .* 1e10, @lift($morse ./ joules), label = "Morse", color = :firebrick4)
-lines!(q .* 1e10, @lift($harmonic ./ joules), label = "harmonic", color = :steelblue3)
+line_m = lines!(q .* 1e10, @lift($morse ./ joules), label = "Morse", color = :firebrick4)
+line_h = lines!(q .* 1e10, @lift($harmonic ./ joules), label = "harmonic", color = :steelblue3)
 
 ylims!(-1, 1e5)
 xlims!(0, 6)
@@ -109,7 +125,14 @@ xmax_m = @lift((endpoints_morse($energies .* joules, q_e, $D, $a)[2][i] - $(ax.l
 xmin_h = @lift((endpoints_harmonic($harmonic_energies .* joules, q_e, $D, $a)[1][i] - $(ax.limits)[1][1]) / $xrange * 1e10)
 xmax_h = @lift((endpoints_harmonic($harmonic_energies .* joules, q_e, $D, $a)[2][i] - $(ax.limits)[1][1]) / $xrange * 1e10)
 
-hlines!(@lift(morse_energies($ns, $ω_0, $ω0χ)[i]), xmin = xmin_m, xmax = xmax_m, color = :firebrick4)
-hlines!(@lift(@. $ω_0 * ($ns + 0.5)[i]), xmin = xmin_h, xmax = xmax_h, color = :steelblue3)
+# You must include `visible = true/false` to toggle hlines!
+hline_m = hlines!(@lift(morse_energies($ns, $ω_0, $ω0χ)[i]), xmin = xmin_m, xmax = xmax_m, color = :firebrick4, visible = true)
+hline_h = hlines!(@lift(@. $ω_0 * ($ns + 0.5)[i]), xmin = xmin_h, xmax = xmax_h, color = :steelblue3, visible = true)
+
+connect!(line_m.visible, toggle_m.active)
+connect!(hline_m.visible, toggle_m.active)
+connect!(line_h.visible, toggle_h.active)
+connect!(hline_h.visible, toggle_h.active)
+
 
 axislegend(ax)
