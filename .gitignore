@@ -3,6 +3,7 @@
 *.jl.mem
 docs/build/
 docs/site/
+scratch/
 Manifest.toml
 .DS_Store
 
