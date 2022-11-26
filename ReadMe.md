@@ -38,4 +38,4 @@ set_theme!(theme_retina())
 
 ## Suggestions
 
-If you have a suggestion for other examples, or you have made a cool example, please let me know and it may be included.
+If you have a suggestion for other examples, or you have made a cool interactive plot with GLMakie, please let me know and it may be included.
