@@ -34,14 +34,16 @@ function morse_energies(n, ω_0, ω0χ0)
     @. ω_0 * (n + 0.5) - ω0χ0 * (n + 0.5)^2
 end
 
-function endpoints_morse(energy, De, a, q_eq)
-    b = @. sqrt(energy / De)
-    return @. q_eq - log(1 + b) / a
+function endpoints_morse(energy, q_eq, D, a)
+    b = @. sqrt(energy / D)
+    left = @. q_eq - log(1 + b) / a
+    right = @. q_eq - log(1 - b) / a
+    return left, right
 end
 
-function endpoints_harmonic(energy, λ)
-    left = @. - sqrt(2 * energy / λ)
-    right = -left
+function endpoints_harmonic(energies, q_eq, D, a)
+    left = @. q_eq - sqrt(energies / D) / a
+    right = @. q_eq + sqrt(energies / D) / a
     return left, right
 end
 
@@ -65,13 +67,15 @@ q_max = q_e - log(1 - 0.9999999) / to_value(a)
 q = range(q_min, q_max, length = 1000)
 
 
-morse = @lift(morse_potential(q, q_e, $D, $a) ./ joules)
-harmonic = @lift(harmonic_potential(q, q_e, $D, $a) ./ joules)
+morse = @lift(morse_potential(q, q_e, $D, $a))
+harmonic = @lift(harmonic_potential(q, q_e, $D, $a))
+energies = @lift(morse_energies($ns, $ω_0, $ω0χ))
 harmonic_energies = @lift(@. $ω_0 * ($ns + 0.5))
 
 
 fig = Figure(resolution = (1800, 1000))
 display(fig)
+DataInspector(fig)
 
 sg = SliderGrid(fig,
         (label = L"ω_0", range = 1000:0.1:10000, startvalue=3000),
@@ -90,15 +94,22 @@ connect!(ω_0, sliderobservables[1])
 connect!(ω0χ, sliderobservables[2])
 
 ax = Axis(fig[1, 1], title = "Diatomic potential model", xlabel = "Intermolecular distance (Å)", ylabel = "Wavenumbers (cm⁻¹)",)
-lines!(q .* 1e10, morse, label = "Morse", color = :firebrick4)
-lines!(q .* 1e10, harmonic, label = "harmonic", color = :steelblue3)
+lines!(q .* 1e10, @lift($morse ./ joules), label = "Morse", color = :firebrick4)
+lines!(q .* 1e10, @lift($harmonic ./ joules), label = "harmonic", color = :steelblue3)
 
-hlines!(@lift(morse_energies($ns, $ω_0, $ω0χ)), color = :firebrick4)
-hlines!(harmonic_energies, color = :steelblue3)
-
-ylims!(0, 1e5)
+ylims!(-1, 1e5)
 xlims!(0, 6)
 
 xrange = @lift($(ax.limits)[1][2] - $(ax.limits)[1][1])
+
+i = 5
+
+xmin_m = @lift((endpoints_morse($energies .* joules, q_e, $D, $a)[1][i] - $(ax.limits)[1][1]) / $xrange .* 1e10)
+xmax_m = @lift((endpoints_morse($energies .* joules, q_e, $D, $a)[2][i] - $(ax.limits)[1][1]) / $xrange .* 1e10)
+xmin_h = @lift((endpoints_harmonic($harmonic_energies .* joules, q_e, $D, $a)[1][i] - $(ax.limits)[1][1]) / $xrange * 1e10)
+xmax_h = @lift((endpoints_harmonic($harmonic_energies .* joules, q_e, $D, $a)[2][i] - $(ax.limits)[1][1]) / $xrange * 1e10)
+
+hlines!(@lift(morse_energies($ns, $ω_0, $ω0χ)[i]), xmin = xmin_m, xmax = xmax_m, color = :firebrick4)
+hlines!(@lift(@. $ω_0 * ($ns + 0.5)[i]), xmin = xmin_h, xmax = xmax_h, color = :steelblue3)
 
 axislegend(ax)
