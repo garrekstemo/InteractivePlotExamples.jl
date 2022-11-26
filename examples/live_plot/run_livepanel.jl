@@ -7,5 +7,5 @@ set_theme!(theme_retina())
 
 include("live_panel.jl")
 
-folder = "./example_data/output/"
+folder = "./examples/live_plot/output/"
 livepanel(folder)
