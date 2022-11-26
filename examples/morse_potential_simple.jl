@@ -11,8 +11,10 @@ function morse_energies(ns, λ)
 end
 
 function endpoints(energy, λ)
-    endpoint = sqrt(2 * energy / λ)
-    return -endpoint, endpoint
+    b = @. sqrt(2 * energy / λ)
+    left = @. - sqrt(λ) * log(1 + b)
+    right = @. - sqrt(λ) * log(1 - b)
+    return left, right
 end
 
 q = -10:0.01:30
@@ -40,7 +42,11 @@ fig[1, 2] = vgrid!(
 ax = Axis(fig[1, 1], title = "Simple Morse Oscillator Model", xlabel = "q", ylabel = "Energy")
 
 lines!(q, morse)
-hlines!(energies, color = :orange)
 
 xlims!(-7, 25)
 ylims!(-1, 13)
+
+xrange = @lift($(ax.limits)[1][2] - $(ax.limits)[1][1])
+xmin = @lift((endpoints.($energies, $λ)[end][1] - $(ax.limits)[1][1]) / $xrange)
+xmax = @lift((endpoints.($energies, $λ)[end][2] - $(ax.limits)[1][1]) / $xrange)
+hlines!(@lift($energies[end]), xmin = xmin, xmax = xmax)
