@@ -41,3 +41,9 @@ set_theme!(theme_retina())
 ## Suggestions
 
 If you have a suggestion for other examples, or you have made a cool interactive plot with GLMakie, please let me know and it may be included.
+
+## References
+
+1. J. P. Dahl and M. Springborg, The Morse Oscillator in Position Space, Momentum Space, and Phase Space, The Journal of Chemical Physics 88, 4535 (1988).
+2. https://scipython.com/blog/the-morse-oscillator/
+3. https://scipython.com/blog/visualizing-vibronic-transitions-in-a-diatomic-molecule/
