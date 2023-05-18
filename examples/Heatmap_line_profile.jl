@@ -1,14 +1,10 @@
 using GLMakie
 
-
 function gaussian(p,x,y)
     a,x0,y0,σx,σy = p
     ans = a * exp( - ((x - x0)^2 / (2 * σx^2 ) + (y - y0)^2 / (2 * σy^2 )))
     return ans
 end
-
-
-
 
 # Figure settings for heatmap
 f = Figure(resolution = (1200,2000),fontsize = 30)
@@ -16,12 +12,10 @@ display(f)
 DataInspector(f)
 ax1 = Axis(f[1,1],title = "2D Gaussian function",xlabel  = "x",xlabelsize = 40,ylabel = "y",ylabelsize = 40)
 
-
 # Plotting range and 2D gaussian parameters.
 x = range(1,200,2000)
 y = range(1,100,1000)
 p = [50,100,50,10,10]
-
 
 # Creation of z data for heatmap
 z = zeros(Float64,length(x),length(y))
