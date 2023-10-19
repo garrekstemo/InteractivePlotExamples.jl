@@ -1,69 +1,50 @@
 using GLMakie
 
-function gaussian(p,x,y)
-    a,x0,y0,σx,σy = p
-    ans = a * exp( - ((x - x0)^2 / (2 * σx^2 ) + (y - y0)^2 / (2 * σy^2 )))
-    return ans
+function gaussian(p, x, y)
+    a, x0, y0, σx, σy = p
+    return a * exp(-((x - x0)^2 / (2 * σx^2 ) + (y - y0)^2 / (2 * σy^2 )))
 end
 
-# Figure settings for heatmap
-f = Figure(resolution = (1200,2000),fontsize = 30)
-display(f)
-DataInspector(f)
-ax1 = Axis(f[1,1],title = "2D Gaussian function",xlabel  = "x",xlabelsize = 40,ylabel = "y",ylabelsize = 40)
+# Generate 2D Gaussian function
+x = range(-100, 100, step=0.5)
+y = range(-100, 100, step=0.5)
+p = [1, 0, 0, 20, 30]
 
-# Plotting range and 2D gaussian parameters.
-x = range(1,200,2000)
-y = range(1,100,1000)
-p = [50,100,50,10,10]
-
-# Creation of z data for heatmap
-z = zeros(Float64,length(x),length(y))
-
-for (i,j) in enumerate(x)
-    for (m,n) in enumerate(y)
-        z[i,m] = gaussian(p,j,n)
+z = zeros(Float64, length(x), length(y))
+for (i, j) in enumerate(x)
+    for (m, n) in enumerate(y)
+        z[i, m] = gaussian(p, j, n)
     end
 end
 
-
-# Plotting heatmap
-heatmap!(ax1,x,y,z,interactivity = true)
-
-
-# Figure settings for 2D figures
-ax2 = Axis(f[2,1],title = "Gaussian function x",xlabel  = "x",xlabelsize = 40,ylabel = "z",ylabelsize = 40)
-ax3 = Axis(f[3,1],title = "Gaussian function y",xlabel  = "y",xlabelsize = 40,ylabel = "z",ylabelsize = 40)
+hline = Observable(1.0)
+vline = Observable(1.0)
+xdata = Observable(z[:, div(length(y), 2)])
+ydata = Observable(z[div(length(x), 2), :])
 
 
-# Definition of observables
-x_line = Observable(100.0)
-y_line = Observable(50.0)
+fig = Figure(resolution = (500, 900))
 
-x_data = Observable(z[:,500])
-y_data = Observable(z[1000,:])
+ax1 = Axis(fig[1, 1], title = "2D Gaussian function", xlabel  = "x", ylabel = "y")
+heatmap!(x, y, z)
+vlines!(hline, color = :red)
+hlines!(vline, color = :red)
 
-# Cursor position lines
-vlines!(ax1,x_line,color = :red)
-hlines!(ax1,y_line,color = :red)
-
-
-# Plotting in 2D figures
-lines!(ax2,x,x_data)
-lines!(ax3,y,y_data)
+ax2 = Axis(fig[2,1], title = "Horizontal cut", xlabel  = "x", ylabel = "Intensity (arb.)")
+ax3 = Axis(fig[3,1], title = "Vertical cut", xlabel  = "y", ylabel = "Intensity (arb.)")
+lines!(ax2, x, xdata)
+lines!(ax3, y, ydata)
 
 
 # on-do Block(executed when triggered)
 on(events(ax1).mouseposition) do mpos
-    x_pos = mouseposition(ax1.scene)[1]
-    y_pos = mouseposition(ax1.scene)[2]
+    xpos = mouseposition(ax1.scene)[1]
+    ypos = mouseposition(ax1.scene)[2]
 
-    x_line[] =  trunc(Int,mouseposition(ax1.scene)[1])
-    y_line[] =  trunc(Int,mouseposition(ax1.scene)[2])
-
-    x_data[] = z[:,findfirst(isapprox(y_pos,atol = 0.2),y)]
-    y_data[] = z[findfirst(isapprox(x_pos,atol = 0.2),x),:]
-    
-    # autolimits!(ax2)
-    # autolimits!(ax3)
+    hline[] =  trunc(Int,mouseposition(ax1.scene)[1])
+    vline[] =  trunc(Int,mouseposition(ax1.scene)[2])
+    xdata[] = z[:, findfirst(isapprox(ypos, atol = 0.5), y)]
+    ydata[] = z[findfirst(isapprox(xpos, atol = 0.5), x), :]
 end
+
+fig
