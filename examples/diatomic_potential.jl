@@ -74,8 +74,7 @@ harmonic_energies = @lift(@. $ω_0 * ($ns + 0.5))
 
 
 fig = Figure(resolution = (1800, 1000))
-display(fig)
-DataInspector(fig)
+DataInspector()
 
 l1 = Label(fig, L"V_m(q) = D (1 - e^{-a  (q - q_e)})^2")
 l2 = Label(fig, L"E_m = ω_0\left(n + \frac{1}{2}\right) - ω_0χ_0\left(n + \frac{1}{2}\right)^2")
@@ -134,5 +133,6 @@ connect!(hline_m.visible, toggle_m.active)
 connect!(line_h.visible, toggle_h.active)
 connect!(hline_h.visible, toggle_h.active)
 
-
 axislegend(ax)
+
+fig
