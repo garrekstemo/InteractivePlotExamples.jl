@@ -1,7 +1,6 @@
 # J. P. Dahl and M. Springborg, The Morse Oscillator in Position Space, Momentum Space, and Phase Space, The Journal of Chemical Physics 88, 4535 (1988).
 
 using GLMakie
-set_theme!()
 
 function morse_potential(qs, λ)
     @. 0.5 * λ * (1 - exp(-qs / sqrt(λ)))^2
@@ -19,7 +18,7 @@ function endpoints(energy, λ)
 end
 
 
-fig = Figure(resolution = (700, 500))
+fig = Figure(size = (700, 500))
 
 λ = Observable(3)
 s = Slider(fig, range = 1:20, startvalue = 3, width = 200)

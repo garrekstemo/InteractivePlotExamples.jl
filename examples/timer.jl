@@ -1,7 +1,4 @@
 using GLMakie
-using SomeMakieThemes
-
-set_theme!(theme_retina())
 
 x = Observable(rand(10))
 y = Observable(rand(10))

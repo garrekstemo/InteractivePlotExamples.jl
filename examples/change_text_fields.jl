@@ -1,5 +1,4 @@
 using GLMakie
-GLMakie.activate!(inline=false)
 
 fig = Figure()
 ax = Axis(fig[1, 1], xlabel = "nm")
@@ -25,6 +24,5 @@ on(b3.clicks) do _
         b3.label = "wl"
     end
 end
-
 
 fig

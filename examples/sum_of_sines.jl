@@ -1,6 +1,4 @@
 using GLMakie
-using SomeMakieThemes
-set_theme!(theme_retina())
 
 x = 0:0.01:8π
 obs = [Observable(0.0) for s in 1:6]
@@ -11,7 +9,6 @@ y2 = @lift(sine(x, $(obs[4]), $(obs[5]), $(obs[6])))
 y3 = @lift($(y1) + $(y2))
 
 fig = Figure()
-display(fig)
 
 color1 = :steelblue3
 color1a = :midnightblue
@@ -64,3 +61,5 @@ ax2 = Axis(fig[2, 1], title = "Sum of sines", xlabel = "t", ylabel = L"f_1 + f_2
 )
 lines!(x, y3, color = :indigo)
 ylims!(-5.2, 5.2)
+
+fig

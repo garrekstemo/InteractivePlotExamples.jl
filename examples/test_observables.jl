@@ -3,7 +3,6 @@ using GLMakie
 f(x, a) = a + x
 
 fig = Figure()
-display(fig)
 
 a = Observable{Int}()
 s = Slider(fig, range = 1:10, startvalue = 3, width = 300)
@@ -33,3 +32,5 @@ on(s.value) do val
     println("max:", length(xmax[]))
     println("")
 end
+
+fig

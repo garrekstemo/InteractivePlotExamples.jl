@@ -9,7 +9,7 @@ y2 = @lift($x .+ randn(50))
 ys = [y1, y2]
 
 fig = Figure()
-display(fig)
+
 ax = Axis(fig[1, 1], xlabel = "x1", ylabel = "y1")
 scatter!(ax, x, y_current)
 
@@ -23,3 +23,5 @@ fig[1, 2] = vgrid!(
     i = to_value(menu.i_selected)
     y_current[] = to_value(ys[i])
 end
+
+fig
