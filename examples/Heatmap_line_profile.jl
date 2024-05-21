@@ -23,7 +23,7 @@ xdata = Observable(z[:, div(length(y), 2)])
 ydata = Observable(z[div(length(x), 2), :])
 
 
-fig = Figure(resolution = (500, 900))
+fig = Figure(size = (500, 900))
 
 ax1 = Axis(fig[1, 1], title = "2D Gaussian function", xlabel  = "x", ylabel = "y")
 heatmap!(x, y, z)

@@ -21,7 +21,8 @@ end
 fig = Figure(size = (700, 500))
 
 λ = Observable(3)
-s = Slider(fig, range = 1:20, startvalue = 3, width = 200)
+# s = Slider(fig, range = 1:20, startvalue = 3, width = 200)
+up = Button(fig, label = "⇧", width = 200)
 ns = @lift(0:$λ)
 q = -10:0.01:30
 
@@ -40,7 +41,7 @@ slabel = Label(fig, @lift("λ = $($λ)"))
 fig[1, 2][1, 1] = vgrid!(eq1, eq2, tellheight = false)
 fig[1, 2][2, 1] = vgrid!(
     slabel,
-    s,
+    up,
     tellheight = false,
     width = 200
     )
@@ -53,17 +54,22 @@ lines_h = lines!(q, 0.5 .* q.^2, color = :deepskyblue4)
 xlims!(-7, 25)
 ylims!(-1, 15)
 
-# xrange = @lift($(ax.limits)[1][2] - $(ax.limits)[1][1])
-# xmin_h = @lift(@. (-$(harmonic_energies) - $(ax.limits)[1][1]) / $xrange)
-# xmax_h = @lift(@. ( $(harmonic_energies) - $(ax.limits)[1][1]) / $xrange)
+xrange = @lift($(ax.limits)[1][2] - $(ax.limits)[1][1])
+xmin_h = @lift((-$(harmonic_energies) .- $(ax.limits)[1][1]) ./ $xrange)
+xmax_h = @lift(($(harmonic_energies) .- $(ax.limits)[1][1]) ./ $xrange)
 # xmin_m = @lift([(endpoints($energies, $λ)[2][i] - $(ax.limits)[1][1]) / $xrange for i in eachindex($energies)])
 # xmax_m = @lift([(endpoints($energies, $λ)[1][i] - $(ax.limits)[1][1]) / $xrange for i in eachindex($energies)])
 
-
 # hlines!(energies, xmin = xmin_m, xmax = xmax_m, color = :firebrick3, visible = true)
-# hlines_h = hlines!(harmonic_levels, xmin = xmin_h, xmax = xmax_h, color = :deepskyblue4, visible = false)
-connect!(lines_h.visible, toggle.active)
-connect!(hlines_h.visible, toggle.active)
-connect!(λ, s.value)
+hlines_h = hlines!(harmonic_levels, xmin = xmin_h, xmax = xmax_h, color = :deepskyblue4, visible = true)
+# connect!(lines_h.visible, toggle.active)
+# connect!(hlines_h.visible, toggle.active)
+# connect!(λ, s.value)
+
+on(up.clicks) do n
+    λ[] += 1
+end
+
+
 
 fig
