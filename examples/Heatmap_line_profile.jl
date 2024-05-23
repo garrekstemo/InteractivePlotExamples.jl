@@ -10,30 +10,57 @@ x = range(-100, 100, step=0.5)
 y = range(-100, 100, step=0.5)
 p = [1, 0, 0, 20, 30]
 
-z = zeros(Float64, length(x), length(y))
-for (i, j) in enumerate(x)
-    for (m, n) in enumerate(y)
-        z[i, m] = gaussian(p, j, n)
+# Configure the settings for heatmap
+f = Figure(resolution = (1200,2000),fontsize = 30)
+display(f)
+DataInspector(f)
+ax1 = Axis(f[1,1],title = "2D Gaussian function",xlabel  = "x",xlabelsize = 40,ylabel = "y",ylabelsize = 40)
+
+
+# Create plot data and 2D gaussian parameters
+x = range(1,200,2000)
+y = range(1,100,1000)
+p = [50,100,50,10,10]
+
+
+# Create z data for heatmap based on x, y, and p
+z = zeros(Float64,length(x),length(y))
+
+for (i,j) in enumerate(x)
+    for (m,n) in enumerate(y)
+        z[i,m] = gaussian(p,j,n)
     end
 end
 
-hline = Observable(1.0)
-vline = Observable(1.0)
-xdata = Observable(z[:, div(length(y), 2)])
-ydata = Observable(z[div(length(x), 2), :])
+
+# Plot heatmap
+heatmap!(ax1,x,y,z,interactivity = true)
 
 
-fig = Figure(size = (500, 900))
+# Configure the settings for 2D figures
+ax2 = Axis(f[2,1],title = "Gaussian function x",xlabel  = "x",xlabelsize = 40,ylabel = "z",ylabelsize = 40)
+ax3 = Axis(f[3,1],title = "Gaussian function y",xlabel  = "y",xlabelsize = 40,ylabel = "z",ylabelsize = 40)
+
+
+# Define observables
+x_line = Observable(100.0)
+y_line = Observable(50.0)
+
 
 ax1 = Axis(fig[1, 1], title = "2D Gaussian function", xlabel  = "x", ylabel = "y")
 heatmap!(x, y, z)
 vlines!(hline, color = :red)
 hlines!(vline, color = :red)
 
-ax2 = Axis(fig[2,1], title = "Horizontal cut", xlabel  = "x", ylabel = "Intensity (arb.)")
-ax3 = Axis(fig[3,1], title = "Vertical cut", xlabel  = "y", ylabel = "Intensity (arb.)")
-lines!(ax2, x, xdata)
-lines!(ax3, y, ydata)
+
+# Plot straight lines indicating the position of the cursor
+vlines!(ax1,x_line,color = :red)
+hlines!(ax1,y_line,color = :red)
+
+
+# Plot 2D figures
+lines!(ax2,x,x_data)
+lines!(ax3,y,y_data)
 
 
 # on-do Block(executed when triggered)
