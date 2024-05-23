@@ -22,22 +22,6 @@ objects. They show how to update a plot when a function updates. Some of these a
 
 The live plot example simulates a device that writes data to a file. It uses FileWatching.jl to watch a folder for a new file, load the data using DataFrames.jl, display the plot, and update the axis limits. In this example, move one of the files in `device` to `output` after running the script.
 
-## Note
-
-Right now I'm testing these on my own machine and I have a theme that works nicely with the Retina displays on macOS computers. You can just delete this dependency and the import statements at the top of the examples.
-
-in the REPL, remove the theme dependency
-```
-julia> ]
-pkg> rm SomeMakieThemes
-```
-
-delete at the top of a file:
-```
-using SomeMakieThemes
-set_theme!(theme_retina())
-```
-
 ## Suggestions
 
 If you have a suggestion for other examples, or you have made a cool interactive plot with GLMakie, please let me know and it may be included.

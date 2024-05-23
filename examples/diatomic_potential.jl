@@ -4,8 +4,6 @@
 # https://scipython.com/blog/the-morse-oscillator/
 
 using GLMakie
-using SomeMakieThemes
-set_theme!(theme_retina())
 
 const u = 1.6605390666e-27  # atomic mass constant
 const c_0 = 3e8
@@ -73,9 +71,8 @@ energies = @lift(morse_energies($ns, $ω_0, $ω0χ))
 harmonic_energies = @lift(@. $ω_0 * ($ns + 0.5))
 
 
-fig = Figure(resolution = (1800, 1000))
-display(fig)
-DataInspector(fig)
+fig = Figure(size = (900, 500))
+DataInspector()
 
 l1 = Label(fig, L"V_m(q) = D (1 - e^{-a  (q - q_e)})^2")
 l2 = Label(fig, L"E_m = ω_0\left(n + \frac{1}{2}\right) - ω_0χ_0\left(n + \frac{1}{2}\right)^2")
@@ -90,7 +87,7 @@ sg = SliderGrid(fig,
         (label = L"ω_0", range = 1000:0.1:10000, format="{:.1f} cm⁻¹", startvalue=3000),
         (label = L"ω_0χ", range = 1:0.1:200, format="{:.1f} cm⁻¹", startvalue=50),
         tellheight = false,
-        width = 600,
+        width = 300,
 )
 
 fig[1, 2][1, 1] = vgrid!(
@@ -134,5 +131,6 @@ connect!(hline_m.visible, toggle_m.active)
 connect!(line_h.visible, toggle_h.active)
 connect!(hline_h.visible, toggle_h.active)
 
-
 axislegend(ax)
+
+fig
