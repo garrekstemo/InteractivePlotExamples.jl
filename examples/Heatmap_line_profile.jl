@@ -10,20 +10,20 @@ end
 
 
 
-# Figure settings for heatmap
+# Configure the settings for heatmap
 f = Figure(resolution = (1200,2000),fontsize = 30)
 display(f)
 DataInspector(f)
 ax1 = Axis(f[1,1],title = "2D Gaussian function",xlabel  = "x",xlabelsize = 40,ylabel = "y",ylabelsize = 40)
 
 
-# Plotting range and 2D gaussian parameters.
+# Create plot data and 2D gaussian parameters
 x = range(1,200,2000)
 y = range(1,100,1000)
 p = [50,100,50,10,10]
 
 
-# Creation of z data for heatmap
+# Create z data for heatmap based on x, y, and p
 z = zeros(Float64,length(x),length(y))
 
 for (i,j) in enumerate(x)
@@ -33,28 +33,28 @@ for (i,j) in enumerate(x)
 end
 
 
-# Plotting heatmap
+# Plot heatmap
 heatmap!(ax1,x,y,z,interactivity = true)
 
 
-# Figure settings for 2D figures
+# Configure the settings for 2D figures
 ax2 = Axis(f[2,1],title = "Gaussian function x",xlabel  = "x",xlabelsize = 40,ylabel = "z",ylabelsize = 40)
 ax3 = Axis(f[3,1],title = "Gaussian function y",xlabel  = "y",xlabelsize = 40,ylabel = "z",ylabelsize = 40)
 
 
-# Definition of observables
+# Define observables
 x_line = Observable(100.0)
 y_line = Observable(50.0)
 
 x_data = Observable(z[:,500])
 y_data = Observable(z[1000,:])
 
-# Cursor position lines
+# Plot straight lines indicating the position of the cursor
 vlines!(ax1,x_line,color = :red)
 hlines!(ax1,y_line,color = :red)
 
 
-# Plotting in 2D figures
+# Plot 2D figures
 lines!(ax2,x,x_data)
 lines!(ax3,y,y_data)
 
