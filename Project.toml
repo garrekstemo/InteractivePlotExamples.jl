@@ -1,5 +1,6 @@
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
 FileWatching = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
