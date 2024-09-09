@@ -20,6 +20,8 @@ Y_combined = @lift(abs.(fftshift(fft($(combined)))))
 frequencies_combined = fftshift(fftfreq(length(t), fs))
 
 
+# Make the Figure
+
 fig = Figure(size = (900, 500))
 
 ax = Axis(fig[1, 1], ylabel = "Amplitude", xlabel = "Time (s)",
