@@ -11,7 +11,7 @@ function livepanel(towatch, file_ext=".csv")
 
     axlive = Axis(fig[1, 1], title = "Put files from 'device' into 'output' folder")
     lines!(xlive, ylive, color = :firebrick4)
-    text!(" • Live", color = :red, space = :relative, align = (:left, :bottom), textsize = 40)
+    text!(" • Live", color = :red, space = :relative, align = (:left, :bottom))
 
     # Watch for new data
     while true
