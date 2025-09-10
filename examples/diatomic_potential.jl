@@ -45,11 +45,11 @@ function endpoints_harmonic(energies, q_eq, D, a)
     return left, right
 end
 
-ω_0 = Observable(2000.0)
-ω0χ = Observable(100.0)
+ω_0 = Observable(1000.0)
+ω0χ = Observable(50.0)
 
 mass_A = 1
-mass_B = 5
+mass_B = mass_A
 μ = mass_A * mass_B / (mass_A + mass_B) * u
 D = @lift($(ω_0)^2 / (4 * $ω0χ) * joules)
 a = @lift($ω_0 * π * c_0 * 100 * sqrt(2 * μ / $D))
@@ -81,9 +81,9 @@ toggle_m = Toggle(fig, active = true)
 toggle_h = Toggle(fig, active = true)
 label_m = Label(fig, "Morse")
 label_h = Label(fig, "Harmonic")
-
+    
 sg = SliderGrid(fig,
-        (label = L"ω_0", range = 1000:0.1:10000, format="{:.1f} cm⁻¹", startvalue=3000),
+        (label = L"ω_0", range = 100:0.1:8000, format="{:.1f} cm⁻¹", startvalue=1000),
         (label = L"ω_0χ", range = 1:0.1:200, format="{:.1f} cm⁻¹", startvalue=50),
         tellheight = false,
         width = 300,
@@ -126,7 +126,7 @@ connect!(hline_m.visible, toggle_m.active)
 connect!(line_h.visible, toggle_h.active)
 connect!(hline_h.visible, toggle_h.active)
 
-ylims!(ax, -100, 1e5)
+ylims!(ax, -100, 1e4)
 xlims!(ax, 0, 6)
 axislegend(ax)
 
