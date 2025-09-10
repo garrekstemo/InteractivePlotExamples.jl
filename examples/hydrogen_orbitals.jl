@@ -1,6 +1,7 @@
 using GLMakie
 using ClassicalOrthogonalPolynomials
 using HarmonicOrthogonalPolynomials
+using Colors
 
 function sph2cart(r, θ, ϕ)
     x = r * sin(θ) * cos(ϕ)
@@ -39,25 +40,24 @@ function orbital_density(n, l, m, x, y, z)
         ψ_real[i, j, k] = real(ψ)
         density[i, j, k] = abs2(ψ)
     end
-    return density
+    # return density
+    return ψ_real
 end
 
-n = Observable(5)
-l = Observable(1)
+n = Observable(3)
+l = Observable(2)
 m = Observable(0)
-rmax = 25
+rmax = 30
 N = 200
 x = y = z = range(-rmax, rmax, length = N)
 ρ = @lift(orbital_density($(n), $(l), $(m), x, y, z))
-ρ = @lift($(ρ) ./ maximum($(ρ)))
-
 
 cmap = :Egypt
 # cmap = :deep
 # cmap = :thermal
+# cmap = :delta
 
-f = Figure(size = (2000, 1000),
-    fontsize = 14)
+f = Figure(size = (800, 500))
 Label(f[0, 1], "Hydrogen Atom Orbitals", tellwidth = false)
 
 tb = Textbox(f[2, 1], placeholder = "nlm",
@@ -70,29 +70,19 @@ on(tb.stored_string) do s
 end
 
 ax1 = Axis3(f[1, 1])
-isoval = 0.42
-# volume!(x[1]..x[end], y[1]..y[end], z[1]..z[end], ψ_real,
-#     algorithm = :iso,
-#     isovalue = -isoval,
-#     colormap = :RdBu,
-#     )
-# volume!(x[1]..x[end], y[1]..y[end], z[1]..z[end], ψ_real,
-#     algorithm = :iso,
-#     isovalue = isoval,
-#     colormap = :RdBu,
-#     )
 
-volume!(x[1]..x[end], y[1]..y[end], z[1]..z[end], ρ,
+volume!(x[1]..x[end], y[1]..y[end], z[1]..z[end],
+    ρ,
+    algorithm = :mip,
     colormap = cmap,
-    # transparency = true
     )
 
 zslice = length(z) ÷ 2
+ρ_slice = @lift($(ρ)[zslice, :, :])
 zmin, zmax = minimum(z), maximum(z)
 ρ_xy = @lift(dropdims(sum($(ρ), dims=3), dims=3))
 ρ_xz = @lift(dropdims(sum($(ρ), dims=2), dims=2))
 ρ_yz = @lift(dropdims(sum($(ρ), dims=1), dims=1))
-ρ_slice = @lift($(ρ)[zslice, :, :])
 
 contour!(x, y, ρ_xy,
     levels = 20,
@@ -113,8 +103,9 @@ contour!(x, y, ρ_yz,
 
 ax2 = Axis(f[1, 2], title = "Cut Plane through z", aspect = 1)
 
-heatmap!(x, y, ρ_slice,
+hm = heatmap!(x, y, ρ_slice,
     colormap = cmap,
     )
+Colorbar(f[1, 3], hm)
 
 f
