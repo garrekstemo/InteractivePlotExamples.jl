@@ -45,14 +45,13 @@ function endpoints_harmonic(energies, q_eq, D, a)
     return left, right
 end
 
-ω_0 = Observable(2990.945)
-ω0χ = Observable(52.818595)
+ω_0 = Observable(2000.0)
+ω0χ = Observable(100.0)
 
 mass_A = 1
-mass_B = 35
+mass_B = 5
 μ = mass_A * mass_B / (mass_A + mass_B) * u
-D = @lift($ω_0^2 / (4 * $ω0χ) * joules)
-k = @lift((2π * c_0 * 100 * $ω_0)^2 * μ)
+D = @lift($(ω_0)^2 / (4 * $ω0χ) * joules)
 a = @lift($ω_0 * π * c_0 * 100 * sqrt(2 * μ / $D))
 λ = @lift(sqrt(2 * μ * $D) / ($a * ħ))
 
@@ -108,29 +107,27 @@ connect!(ω0χ, sliderobservables[2])
 
 ax = Axis(fig[1, 1], title = "Diatomic potential model", xlabel = "Intermolecular distance (Å)", ylabel = "Wavenumbers (cm⁻¹)",)
 line_m = lines!(q .* 1e10, @lift($morse ./ joules), label = "Morse", color = :firebrick4)
-line_h = lines!(q .* 1e10, @lift($harmonic ./ joules), label = "harmonic", color = :steelblue3)
+line_h = lines!(q .* 1e10, @lift($harmonic ./ joules), label = "Harmonic", color = :steelblue3)
 
-ylims!(-1, 1e5)
-xlims!(0, 6)
 
-xrange = @lift($(ax.limits)[1][2] - $(ax.limits)[1][1])
+lows_m = @lift(endpoints_morse($energies .* joules, q_e, $D, $a)[1] .* 1e10)
+highs_m = @lift(endpoints_morse($energies .* joules, q_e, $D, $a)[2] .* 1e10)
+vals_m = @lift(morse_energies($ns, $ω_0, $ω0χ))
+lows_h = @lift(endpoints_harmonic($harmonic_energies .* joules, q_e, $D, $a)[1] .* 1e10)
+highs_h = @lift(endpoints_harmonic($harmonic_energies .* joules, q_e, $D, $a)[2] .* 1e10)
+vals_h = @lift($ω_0 * ($ns .+ 0.5))
 
-i = 5
+hline_m = rangebars!(vals_m, lows_m, highs_m, direction = :x, color = :firebrick4)
+hline_h = rangebars!(vals_h, lows_h, highs_h, direction = :x, color = :steelblue3)
 
-xmin_m = @lift((endpoints_morse($energies .* joules, q_e, $D, $a)[1][i] - $(ax.limits)[1][1]) / $xrange .* 1e10)
-xmax_m = @lift((endpoints_morse($energies .* joules, q_e, $D, $a)[2][i] - $(ax.limits)[1][1]) / $xrange .* 1e10)
-xmin_h = @lift((endpoints_harmonic($harmonic_energies .* joules, q_e, $D, $a)[1][i] - $(ax.limits)[1][1]) / $xrange * 1e10)
-xmax_h = @lift((endpoints_harmonic($harmonic_energies .* joules, q_e, $D, $a)[2][i] - $(ax.limits)[1][1]) / $xrange * 1e10)
-
-# You must include `visible = true/false` to toggle hlines!
-hline_m = hlines!(@lift(morse_energies($ns, $ω_0, $ω0χ)[i]), xmin = xmin_m, xmax = xmax_m, color = :firebrick4, visible = true)
-hline_h = hlines!(@lift(@. $ω_0 * ($ns + 0.5)[i]), xmin = xmin_h, xmax = xmax_h, color = :steelblue3, visible = true)
 
 connect!(line_m.visible, toggle_m.active)
 connect!(hline_m.visible, toggle_m.active)
 connect!(line_h.visible, toggle_h.active)
 connect!(hline_h.visible, toggle_h.active)
 
+ylims!(ax, -100, 1e5)
+xlims!(ax, 0, 6)
 axislegend(ax)
 
 fig
