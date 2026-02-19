@@ -105,7 +105,7 @@ sliderobservables = [s.value for s in sg.sliders]
 connect!(ω_0, sliderobservables[1])
 connect!(ω0χ, sliderobservables[2])
 
-ax = Axis(fig[1, 1], title = "Diatomic potential model", xlabel = "Intermolecular distance (Å)", ylabel = "Wavenumbers (cm⁻¹)",)
+ax = Axis(fig[1, 1], title = "Diatomic potential model", xlabel = "Intermolecular distance (Å)", ylabel = "Wavenumber cm⁻¹")
 line_m = lines!(q .* 1e10, @lift($morse ./ joules), label = "Morse", color = :firebrick4)
 line_h = lines!(q .* 1e10, @lift($harmonic ./ joules), label = "Harmonic", color = :steelblue3)
 
